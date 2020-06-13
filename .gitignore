@@ -1,0 +1,10 @@
+.buildpath
+.project
+.settings
+.idea
+.DS_Store
+
+logs
+worker
+*.pid
+*.log
