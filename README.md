@@ -185,9 +185,7 @@ return [
 
 
 配置修改完成后使用 `php artisan gateway-worker demo start` 命令启动，`demo` 为刚刚配置的键名  
-
-`event_handler` 为配置时默认使用 `LjhSmileKing\GatewayWorker\GatewayWorkerEvents`  
-实现了 `onMessage` 、`onConnect`、`onClose` 三个静态方法  
+`event_handler` 未配置时默认使用 `LjhSmileKing\GatewayWorker\GatewayWorkerEvents` ，实现了 `onMessage` 、`onConnect`、`onClose` 三个静态方法  
 可自定义 `event_handler` 类，需要继承 `LjhSmileKing\GatewayWorker\GatewayWorkerEvents` 然后重写相关静态方法
 ```php
 namespace App\GatewayWorker\Demo;
