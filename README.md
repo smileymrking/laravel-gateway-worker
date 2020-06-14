@@ -208,7 +208,8 @@ class DemoEvent extends GatewayWorkerEvents
 
 ## 日志查看
 通过配置文件中 `service` 项所配置的类的命名空间查看  
-如 `push` 服务的日志文件在 `vendor/ljhsmileking/ljhsmileking_gatewayworker_push_push.log`  
+如 `push` 服务的日志文件路径为：  
+`vendor/ljhsmileking/laravel-gateway-worker/src/GatewayWorker/worker/ljhsmileking_gatewayworker_push_push.log`  
 > 启动进程 pid 文件与日志文件路径和名称相同，后缀为 `.pid`
 
 ## 参考
