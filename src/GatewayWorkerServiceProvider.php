@@ -1,10 +1,10 @@
 <?php
 
-namespace LjhSmileKing\GatewayWorker;
+namespace SmileyMrKing\GatewayWorker;
 
 use GatewayWorker\Lib\Gateway;
 use Illuminate\Support\ServiceProvider;
-use LjhSmileKing\GatewayWorker\Commands\GatewayWorkerCommand;
+use SmileyMrKing\GatewayWorker\Commands\GatewayWorkerCommand;
 
 class GatewayWorkerServiceProvider extends ServiceProvider
 {

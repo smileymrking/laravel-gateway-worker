@@ -1,6 +1,6 @@
 <?php
 
-namespace LjhSmileKing\GatewayWorker;
+namespace SmileyMrKing\GatewayWorker;
 
 use Workerman\Worker;
 

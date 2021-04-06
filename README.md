@@ -3,7 +3,7 @@
 
 ## 安装
 ```shell
-composer require ljhsmileking/laravel-gateway-worker
+composer require smileymrking/laravel-gateway-worker
 ```
 
 ## 配置
@@ -15,14 +15,14 @@ composer require ljhsmileking/laravel-gateway-worker
 ```php
 'providers' => [
     // ...
-    LjhSmileKing\GatewayWorker\GatewayWorkerServiceProvider::class,
+    SmileyMrKing\GatewayWorker\GatewayWorkerServiceProvider::class,
 ];
 ```
 
 2. 创建配置文件：
 
 ```shell
-php artisan vendor:publish --provider="LjhSmileKing\GatewayWorker\GatewayWorkerServiceProvider"
+php artisan vendor:publish --provider="SmileyMrKing\GatewayWorker\GatewayWorkerServiceProvider"
 ```
 
 3. 修改应用根目录下的 `config/gateway-worker.php` 中对应的配置即可。
@@ -33,10 +33,10 @@ php artisan vendor:publish --provider="LjhSmileKing\GatewayWorker\GatewayWorkerS
 1. 在 `bootstrap/app.php` 中 82 行左右：
 
 ```php
-$app->register(LjhSmileKing\GatewayWorker\GatewayWorkerServiceProvider::class);
+$app->register(SmileyMrKing\GatewayWorker\GatewayWorkerServiceProvider::class);
 ```
 
-2. 发布 `config/gateway-worker.php` 配置文件，将 `vendor/ljhsmileking/laravel-gateway-worker/config/gateway-worker.php` 拷贝到`项目根目录/config`目录下。
+2. 发布 `config/gateway-worker.php` 配置文件，将 `vendor/smileymrking/laravel-gateway-worker/config/gateway-worker.php` 拷贝到`项目根目录/config`目录下。
 
 
 配置文件中已默认创建了一个名为 push 的 websocket 服务，配置如下，可自行调整相关配置，或无需发布配置文件，直接进入下一步启动服务
@@ -52,7 +52,7 @@ return [
     'default_service' => 'push', # 默认的 Gateway::$registerAddress 设置为 push.register_address
 
     'push' => [
-        'service' => \LjhSmileKing\GatewayWorker\Push\Push::class,
+        'service' => \SmileyMrKing\GatewayWorker\Push\Push::class,
         'lan_ip' => env('WS_LAN_IP', '127.0.0.1'), #内网ip,多服务器分布式部署的时候需要填写真实的内网ip
 
         'register' => env('WS_REGISTER', 'text://0.0.0.0:20000'),
@@ -61,7 +61,7 @@ return [
         'worker_name' => 'PushBusinessWorker', #设置 BusinessWorker 进程的名称
         'worker_count' => 1, #设置 BusinessWorker 进程的数量
         # 设置使用哪个类来处理业务,业务类至少要实现onMessage静态方法，onConnect 和 onClose 静态方法可以不用实现
-        'event_handler' => \LjhSmileKing\GatewayWorker\Push\PushEvent::class,
+        'event_handler' => \SmileyMrKing\GatewayWorker\Push\PushEvent::class,
 
         'gateway' => env('WS_GATEWAY', 'websocket://0.0.0.0:20010'),# 允许连接服务的地址
         'gateway_name' => 'PushGateway', #设置 Gateway 进程的名称，方便status命令中查看统计
@@ -121,13 +121,13 @@ Press Ctrl+C to stop. Start success.
 ## 创建多个服务
 > 可同时启动多个服务  
 
-参考 `push` 服务，手动创建一个 Demao 类，继承 `LjhSmileKing\GatewayWorker\GatewayWorkerService`  
+参考 `push` 服务，手动创建一个 Demao 类，继承 `SmileyMrKing\GatewayWorker\GatewayWorkerService`  
 定义一个 `$serviceName` 属性，值为下一步所添加配置文的键名  
 ```php
 
 namespace App\GatewayWorker\Demo;
 
-use LjhSmileKing\GatewayWorker\GatewayWorkerService;
+use SmileyMrKing\GatewayWorker\GatewayWorkerService;
 
 class Demo extends GatewayWorkerService
 {
@@ -143,7 +143,7 @@ class Demo extends GatewayWorkerService
 return [
     // ...
     'demo' => [
-        'service' => \LjhSmileKing\GatewayWorker\Demo\Demo::class,
+        'service' => \SmileyMrKing\GatewayWorker\Demo\Demo::class,
         'lan_ip' => env('WS_LAN_IP_DEMO', '127.0.0.1'), #内网ip,多服务器分布式部署的时候需要填写真实的内网ip
 
         'register' => env('WS_REGISTER_DEMO', 'text://0.0.0.0:20000'),
@@ -152,7 +152,7 @@ return [
         'worker_name' => 'DemoBusinessWorker', #设置 BusinessWorker 进程的名称
         'worker_count' => 1, #设置 BusinessWorker 进程的数量
         # 设置使用哪个类来处理业务,业务类至少要实现onMessage静态方法，onConnect 和 onClose 静态方法可以不用实现
-        'event_handler' => \LjhSmileKing\GatewayWorker\Demo\DemoEvent::class,
+        'event_handler' => \SmileyMrKing\GatewayWorker\Demo\DemoEvent::class,
 
         'gateway' => env('WS_GATEWAY_DEMO', 'websocket://0.0.0.0:20010'),# 允许连接服务的地址
         'gateway_name' => 'DemoGateway', #设置 Gateway 进程的名称，方便status命令中查看统计
@@ -185,12 +185,12 @@ return [
 
 
 配置修改完成后使用 `php artisan gateway-worker demo start` 命令启动，`demo` 为刚刚配置的键名  
-`event_handler` 未配置时默认使用 `LjhSmileKing\GatewayWorker\GatewayWorkerEvents` ，实现了 `onMessage` 、`onConnect`、`onClose` 三个静态方法  
-可自定义 `event_handler` 类，需要继承 `LjhSmileKing\GatewayWorker\GatewayWorkerEvents` 然后重写相关静态方法
+`event_handler` 未配置时默认使用 `SmileyMrKing\GatewayWorker\GatewayWorkerEvents` ，实现了 `onMessage` 、`onConnect`、`onClose` 三个静态方法  
+可自定义 `event_handler` 类，需要继承 `SmileyMrKing\GatewayWorker\GatewayWorkerEvents` 然后重写相关静态方法
 ```php
 namespace App\GatewayWorker\Demo;
 
-use LjhSmileKing\GatewayWorker\GatewayWorkerEvents;
+use SmileyMrKing\GatewayWorker\GatewayWorkerEvents;
 
 class DemoEvent extends GatewayWorkerEvents
 {
@@ -209,7 +209,7 @@ class DemoEvent extends GatewayWorkerEvents
 ## 日志查看
 通过配置文件中 `service` 项所配置的类的命名空间查看  
 如 `push` 服务的日志文件路径为：  
-`vendor/ljhsmileking/laravel-gateway-worker/src/GatewayWorker/worker/ljhsmileking_gatewayworker_push_push.log`  
+`vendor/smileymrking/laravel-gateway-worker/src/GatewayWorker/worker/smileymrking_gatewayworker_push_push.log`  
 > 启动进程 pid 文件与日志文件路径和名称相同，后缀为 `.pid`
 
 ## 参考

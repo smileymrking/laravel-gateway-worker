@@ -1,6 +1,6 @@
 <?php
 
-namespace LjhSmileKing\GatewayWorker;
+namespace SmileyMrKing\GatewayWorker;
 
 use GatewayWorker\BusinessWorker;
 use GatewayWorker\Gateway;

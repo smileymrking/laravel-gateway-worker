@@ -1,8 +1,8 @@
 <?php
 
-namespace LjhSmileKing\GatewayWorker\Push;
+namespace SmileyMrKing\GatewayWorker\Push;
 
-use LjhSmileKing\GatewayWorker\GatewayWorkerService;
+use SmileyMrKing\GatewayWorker\GatewayWorkerService;
 
 class Push extends GatewayWorkerService
 {

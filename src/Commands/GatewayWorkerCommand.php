@@ -1,6 +1,6 @@
 <?php
 
-namespace LjhSmileKing\GatewayWorker\Commands;
+namespace SmileyMrKing\GatewayWorker\Commands;
 
 use Illuminate\Console\Command;
 

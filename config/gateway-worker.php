@@ -17,7 +17,7 @@ return [
     'default_service' => 'push', # 默认的 Gateway::$registerAddress 设置为 push.register_address
 
     'push' => [
-        'service' => \LjhSmileKing\GatewayWorker\Push\Push::class,
+        'service' => \SmileyMrKing\GatewayWorker\Push\Push::class,
         'lan_ip' => env('WS_LAN_IP', '127.0.0.1'), #内网ip,多服务器分布式部署的时候需要填写真实的内网ip
 
         'register' => env('WS_REGISTER', 'text://0.0.0.0:20000'),
@@ -26,7 +26,7 @@ return [
         'worker_name' => 'PushBusinessWorker', #设置 BusinessWorker 进程的名称
         'worker_count' => 1, #设置 BusinessWorker 进程的数量
         # 设置使用哪个类来处理业务,业务类至少要实现onMessage静态方法，onConnect 和 onClose 静态方法可以不用实现
-        'event_handler' => \LjhSmileKing\GatewayWorker\Push\PushEvent::class,
+        'event_handler' => \SmileyMrKing\GatewayWorker\Push\PushEvent::class,
 
         'gateway' => env('WS_GATEWAY', 'websocket://0.0.0.0:20010'),# 允许连接服务的地址
         'gateway_name' => 'PushGateway', #设置 Gateway 进程的名称，方便status命令中查看统计

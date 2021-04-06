@@ -1,12 +1,12 @@
 {
-    "name": "ljhsmileking/laravel-gateway-worker",
+    "name": "smileymrking/laravel-gateway-worker",
     "description": "GatewayWorker SDK for Laravel",
     "keywords": ["gatewayworker", "workerman","laravel", "sdk"],
     "license": "MIT",
     "authors": [
         {
-            "name": "ljhsmileking",
-            "email": "ljhsmileking@gmail.com"
+            "name": "smileymrking",
+            "email": "smileymrking@gmail.com"
         }
     ],
     "require": {
@@ -16,13 +16,13 @@
     },
     "autoload": {
         "psr-4": {
-            "LjhSmileKing\\GatewayWorker\\": "src/"
+            "SmileyMrKing\\GatewayWorker\\": "src/"
         }
     },
     "extra": {
         "laravel": {
             "providers": [
-                "LjhSmileKing\\GatewayWorker\\GatewayWorkerServiceProvider"
+                "SmileyMrKing\\GatewayWorker\\GatewayWorkerServiceProvider"
             ]
         }
     }
