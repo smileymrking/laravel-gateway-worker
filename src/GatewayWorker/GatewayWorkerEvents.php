@@ -5,7 +5,7 @@
  * 然后观察一段时间workerman.log看是否有process_timeout异常
  */
 //declare(ticks=1);
-namespace SmileyMrKing\GatewayWorker;
+namespace SmileyMrKing\GatewayWorker\GatewayWorker;
 
 use \GatewayWorker\Lib\Gateway;
 

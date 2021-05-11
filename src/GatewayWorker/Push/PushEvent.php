@@ -1,9 +1,9 @@
 <?php
 
-namespace SmileyMrKing\GatewayWorker\Push;
+namespace SmileyMrKing\GatewayWorker\GatewayWorker\Push;
 
 
-use SmileyMrKing\GatewayWorker\GatewayWorkerEvents;
+use SmileyMrKing\GatewayWorker\GatewayWorker\GatewayWorkerEvents;
 
 class PushEvent extends GatewayWorkerEvents
 {
