@@ -121,13 +121,13 @@ Press Ctrl+C to stop. Start success.
 ## 创建多个服务
 > 可同时启动多个服务  
 
-参考 `push` 服务，手动创建一个 Demao 类，继承 `SmileyMrKing\GatewayWorker\GatewayWorkerService`  
+参考 `push` 服务，手动创建一个 Demao 类，继承 `SmileyMrKing\GatewayWorker\GatewayWorker\GatewayWorkerService`  
 定义一个 `$serviceName` 属性，值为下一步所添加配置文的键名  
 ```php
 
 namespace App\GatewayWorker\Demo;
 
-use SmileyMrKing\GatewayWorker\GatewayWorkerService;
+use SmileyMrKing\GatewayWorker\GatewayWorker\GatewayWorkerService
 
 class Demo extends GatewayWorkerService
 {
@@ -143,7 +143,7 @@ class Demo extends GatewayWorkerService
 return [
     // ...
     'demo' => [
-        'service' => \SmileyMrKing\GatewayWorker\Demo\Demo::class,
+        'service' => \App\GatewayWorker\Demo\Demo::class,
         'lan_ip' => env('WS_LAN_IP_DEMO', '127.0.0.1'), #内网ip,多服务器分布式部署的时候需要填写真实的内网ip
 
         'register' => env('WS_REGISTER_DEMO', 'text://0.0.0.0:20000'),
@@ -152,7 +152,7 @@ return [
         'worker_name' => 'DemoBusinessWorker', #设置 BusinessWorker 进程的名称
         'worker_count' => 1, #设置 BusinessWorker 进程的数量
         # 设置使用哪个类来处理业务,业务类至少要实现onMessage静态方法，onConnect 和 onClose 静态方法可以不用实现
-        'event_handler' => \SmileyMrKing\GatewayWorker\Demo\DemoEvent::class,
+        'event_handler' => \App\GatewayWorker\Demo\DemoEvent::class,
 
         'gateway' => env('WS_GATEWAY_DEMO', 'websocket://0.0.0.0:20010'),# 允许连接服务的地址
         'gateway_name' => 'DemoGateway', #设置 Gateway 进程的名称，方便status命令中查看统计
@@ -185,8 +185,8 @@ return [
 
 
 配置修改完成后使用 `php artisan gateway-worker demo start` 命令启动，`demo` 为刚刚配置的键名  
-`event_handler` 未配置时默认使用 `SmileyMrKing\GatewayWorker\GatewayWorkerEvents` ，实现了 `onMessage` 、`onConnect`、`onClose` 三个静态方法  
-可自定义 `event_handler` 类，需要继承 `SmileyMrKing\GatewayWorker\GatewayWorkerEvents` 然后重写相关静态方法
+`event_handler` 未配置时默认使用 `SmileyMrKing\GatewayWorker\GatewayWorker\GatewayWorkerEvents` ，实现了 `onMessage` 、`onConnect`、`onClose` 三个静态方法  
+可自定义 `event_handler` 类，需要继承 `SmileyMrKing\GatewayWorker\GatewayWorker\GatewayWorkerEvents` 然后重写相关静态方法
 ```php
 namespace App\GatewayWorker\Demo;
 
