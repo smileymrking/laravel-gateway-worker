@@ -190,7 +190,7 @@ return [
 ```php
 namespace App\GatewayWorker\Demo;
 
-use SmileyMrKing\GatewayWorker\GatewayWorkerEvents;
+use SmileyMrKing\GatewayWorker\GatewayWorker\GatewayWorkerEvents;
 
 class DemoEvent extends GatewayWorkerEvents
 {
