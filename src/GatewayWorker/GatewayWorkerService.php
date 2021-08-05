@@ -5,6 +5,7 @@ namespace SmileyMrKing\GatewayWorker\GatewayWorker;
 use GatewayWorker\BusinessWorker;
 use GatewayWorker\Gateway;
 use GatewayWorker\Register;
+use Workerman\Worker;
 
 class GatewayWorkerService implements GatewayWorkerInterface
 {
@@ -37,5 +38,28 @@ class GatewayWorkerService implements GatewayWorkerInterface
     public function startRegister()
     {
         new Register($this->config('register')); # 允许注册通讯的地址
+    }
+
+    public function ready()
+    {
+        if ($this->config('gateway_start')) $this->startGateWay();
+        if ($this->config('business_worker_start')) $this->startBusinessWorker();
+        if ($this->config('register_start')) $this->startRegister();
+
+        $path = __DIR__ . '/worker';
+        if (!is_dir($path)) mkdir($path);
+        $unique_prefix = \str_replace('\\', '_', strtolower(static::class));
+
+        $pidFile = $this->config('pid_file') ?: "$path/$unique_prefix.pid";
+        $logFile = $this->config('log_file') ?: "$path/$unique_prefix.log";
+
+        Worker::$pidFile = $pidFile;
+        Worker::$logFile = $logFile;
+    }
+
+    public function start()
+    {
+        $this->ready();
+        Worker::runAll();
     }
 }

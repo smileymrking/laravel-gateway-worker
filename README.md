@@ -87,6 +87,9 @@ return [
             )
         ],*/
     ],
+    
+    'pid_file' => null, // 自定义pid文件绝对路径，默认在vendor/smileymrking/laravel-gateway-worker/src/GatewayWorker/worker目录下
+    'log_file' => null, // 自定义日志文件绝对路径，默认同上
 
 ];
 
@@ -121,6 +124,7 @@ Press Ctrl+C to stop. Start success.
 ## 创建多个服务
 > 可同时启动多个服务  
 
+#### 新增服务
 参考 `push` 服务，手动创建一个 Demao 类，继承 `SmileyMrKing\GatewayWorker\GatewayWorker\GatewayWorkerService`  
 定义一个 `$serviceName` 属性，值为下一步所添加配置文的键名  
 ```php
@@ -136,6 +140,7 @@ class Demo extends GatewayWorkerService
 
 ```
 
+#### 新增配置
 直接复制一份 push 的配置文件进行修改，注意需要修改 `worker_name` 、`gateway_name` 和相关端口的配置，避免重复  
 添加配置的键名为 上一步定义的 `$serviceName` 的值，配置中 `service` 执行上一步配置的 Demo 类  
 
@@ -177,6 +182,8 @@ return [
                 'allow_self_signed' => true, //如果是自签名证书需要开启此选项
             )
         ],*/
+        'pid_file' => storage_path('logs/demo-gateway-worker.pid'),
+        'log_file' => storage_path('logs/demo-gateway-worker.log'),
     ],
 
 ];
@@ -184,7 +191,9 @@ return [
 ```
 
 
-配置修改完成后使用 `php artisan gateway-worker demo start` 命令启动，`demo` 为刚刚配置的键名  
+配置修改完成后使用 `php artisan gateway-worker demo start` 命令启动，`demo` 为刚刚配置的键名
+
+#### 自定义Event Handler  
 `event_handler` 未配置时默认使用 `SmileyMrKing\GatewayWorker\GatewayWorker\GatewayWorkerEvents` ，实现了 `onMessage` 、`onConnect`、`onClose` 三个静态方法  
 可自定义 `event_handler` 类，需要继承 `SmileyMrKing\GatewayWorker\GatewayWorker\GatewayWorkerEvents` 然后重写相关静态方法
 ```php
@@ -207,10 +216,8 @@ class DemoEvent extends GatewayWorkerEvents
 可直接使用 GatewayWorker 中的 `\GatewayWorker\Lib\Gateway` 类，具体用法请查看 [GatewayWorker 手册](http://doc2.workerman.net/)
 
 ## 日志查看
-通过配置文件中 `service` 项所配置的类的命名空间查看  
-如 `push` 服务的日志文件路径为：  
-`vendor/smileymrking/laravel-gateway-worker/src/GatewayWorker/worker/smileymrking_gatewayworker_push_push.log`  
-> 启动进程 pid 文件与日志文件路径和名称相同，后缀为 `.pid`
+日志和PID文件位于 `vendor/smileymrking/laravel-gateway-worker/src/GatewayWorker/worker` 目录下  
+可通过配置中的 `pid_file` 和 `log_file` 自定义日志和PID路径
 
 ## 参考
 - [GatewayWorker2.x 3.x 手册](http://doc2.workerman.net/)

@@ -3,9 +3,12 @@
 namespace SmileyMrKing\GatewayWorker\Commands;
 
 use Illuminate\Console\Command;
+use SmileyMrKing\GatewayWorker\GatewayWorker\GatewayWorkerTrait;
 
 class GatewayWorkerCommand extends Command
 {
+    use GatewayWorkerTrait;
+
     /**
      * The name and signature of the console command.
      *
@@ -19,6 +22,9 @@ class GatewayWorkerCommand extends Command
      * @var string
      */
     protected $description = 'Start a GatewayWorker Service.';
+
+
+    protected $serviceName = null;
 
     /**
      * Create a new command instance.
@@ -42,15 +48,15 @@ class GatewayWorkerCommand extends Command
 
         if (in_array($action = $this->argument('action'), ['status', 'start', 'stop', 'restart', 'reload', 'connections'])) {
 
-            $serviceName = $this->argument('serviceName');
+            $this->serviceName = $this->argument('serviceName');
             $daemon = $this->option('d') ? '-d' : '';
 
-            $class = config("gateway-worker.{$serviceName}.service");
+            $class = $this->config("service");
 
             if (empty($class)) {
-                $this->error("{$serviceName}'s GatewayWorker config doesn't exist");
+                $this->error("{$this->serviceName}'s GatewayWorker config doesn't exist");
             } else {
-                $argv[0] = 'gateway-worker ' . $serviceName;
+                $argv[0] = 'gateway-worker ' . $this->serviceName;
                 $argv[1] = $action;
                 $argv[2] = $daemon;
 

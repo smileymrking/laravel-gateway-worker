@@ -51,6 +51,9 @@ return [
                 'allow_self_signed' => true, //如果是自签名证书需要开启此选项
             )
         ],*/
+
+        'pid_file' => null, // 自定义pid文件绝对路径，默认在vendor/smileymrking/laravel-gateway-worker/src/GatewayWorker/worker目录下
+        'log_file' => null, // 自定义日志文件绝对路径，默认同上
     ],
 
 ];

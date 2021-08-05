@@ -4,7 +4,10 @@
 .idea
 .DS_Store
 
+vendor
 logs
 worker
 *.pid
 *.log
+*.cache
+composer.lock
