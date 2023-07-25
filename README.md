@@ -1,45 +1,46 @@
+> English｜中文
 # Laravel GatewayWorker
-为了能够在 Laravel 中更优雅的使用 [GatewayWorker](https://github.com/walkor/GatewayWorker) 于是我基于 GatewayWorker 开发了这个扩展，使其能够开箱即用。
+In order to use [GatewayWorker](https://github.com/walkor/GatewayWorker) more elegantly in Laravel, I developed this extension based on GatewayWorker to make it ready to use.
 
-## 安装
+## Installation
 ```shell
 composer require smileymrking/laravel-gateway-worker
 ```
 
-## 配置
+## Configuration
 
 ### Laravel
 
-1. 在 `config/app.php` 注册 ServiceProvider 和 Facade (Laravel 5.5 + 无需手动注册)
+1. Register the ServiceProvider and Facade in `config/app.php` (For Laravel 5.5 and above, no manual registration is required)
 
 ```php
 'providers' => [
-    // ...
-    SmileyMrKing\GatewayWorker\GatewayWorkerServiceProvider::class,
+// ...
+SmileyMrKing\GatewayWorker\GatewayWorkerServiceProvider::class,
 ];
 ```
 
-2. 创建配置文件：
+2. Publish the configuration file:
 
 ```shell
 php artisan vendor:publish --provider="SmileyMrKing\GatewayWorker\GatewayWorkerServiceProvider"
 ```
 
-3. 修改应用根目录下的 `config/gateway-worker.php` 中对应的配置即可。
+3. Modify the corresponding configurations in `config/gateway-worker.php` located in the application root directory.
 
 ### Lumen
-> 并未使用过 Lumen 未实际测试，以下参考其他扩展包编写
+> Lumen has not been used or tested, the following instructions are based on other extension package development.
 
-1. 在 `bootstrap/app.php` 中 82 行左右：
+1. In `bootstrap/app.php` around line 82:
 
 ```php
 $app->register(SmileyMrKing\GatewayWorker\GatewayWorkerServiceProvider::class);
 ```
 
-2. 发布 `config/gateway-worker.php` 配置文件，将 `vendor/smileymrking/laravel-gateway-worker/config/gateway-worker.php` 拷贝到`项目根目录/config`目录下。
+2. Publish the `config/gateway-worker.php` configuration file by copying it from `vendor/smileymrking/laravel-gateway-worker/config/gateway-worker.php` to the `project_root/config` directory.
 
+The configuration file already has a default websocket service named 'push', you can adjust the relevant configurations accordingly, or directly proceed to the next step to start the service.
 
-配置文件中已默认创建了一个名为 push 的 websocket 服务，配置如下，可自行调整相关配置，或无需发布配置文件，直接进入下一步启动服务
 ```php
 return [
 
@@ -49,61 +50,61 @@ return [
     |--------------------------------------------------------------------------
     */
 
-    'default_service' => 'push', # 默认的 Gateway::$registerAddress 设置为 push.register_address
+    'default_service' => 'push', # Set Gateway::$registerAddress to push.register_address by default
 
     'push' => [
         'service' => \SmileyMrKing\GatewayWorker\Push\Push::class,
-        'lan_ip' => env('WS_LAN_IP', '127.0.0.1'), #内网ip,多服务器分布式部署的时候需要填写真实的内网ip
+        'lan_ip' => env('WS_LAN_IP', '127.0.0.1'), # Internal IP, fill in the real internal IP when deploying in a multi-server distributed environment.
 
         'register' => env('WS_REGISTER', 'text://0.0.0.0:20000'),
-        'register_address' => env('WS_REGISTER_ADDRESS', '127.0.0.1:20000'), #注册服务地址
+        'register_address' => env('WS_REGISTER_ADDRESS', '127.0.0.1:20000'), # Registration service address
 
-        'worker_name' => 'PushBusinessWorker', #设置 BusinessWorker 进程的名称
-        'worker_count' => 1, #设置 BusinessWorker 进程的数量
-        # 设置使用哪个类来处理业务,业务类至少要实现onMessage静态方法，onConnect 和 onClose 静态方法可以不用实现
+        'worker_name' => 'PushBusinessWorker', # Set the name of the BusinessWorker process
+        'worker_count' => 1, # Set the number of BusinessWorker processes
+        # Set which class to handle business logic. The class must implement the static method 'onMessage'. 'onConnect' and 'onClose' static methods are optional.
         'event_handler' => \SmileyMrKing\GatewayWorker\Push\PushEvent::class,
 
-        'gateway' => env('WS_GATEWAY', 'websocket://0.0.0.0:20010'),# 允许连接服务的地址
-        'gateway_name' => 'PushGateway', #设置 Gateway 进程的名称，方便status命令中查看统计
-        'gateway_count' => 1, # Gateway 进程的数量
-        'start_port' => env('WS_START_PORT', '20100'),  #监听本机端口的起始端口
-        'ping_interval' => 55,  # 心跳间隔时间，只针对服务端发送心跳
-        'ping_not_response_limit' => 1,   # 0 服务端主动发送心跳, 1 客户端主动发送心跳
-        'ping_data' => '{"type":"ping"}', # 服务端主动发送心跳的数据，只针对服务端发送心跳,客户端超时未发送心跳时会主动向客户端发送一次心跳检测
+        'gateway' => env('WS_GATEWAY', 'websocket://0.0.0.0:20010'),# Address allowed for connection
+        'gateway_name' => 'PushGateway', # Set the name of the Gateway process for easy statistics in the 'status' command
+        'gateway_count' => 1, # Number of Gateway processes
+        'start_port' => env('WS_START_PORT', '20100'),  # Starting port for listening on the local machine
+        'ping_interval' => 55,  # Heartbeat interval, only for server-side heartbeat
+        'ping_not_response_limit' => 1,   # 0: server actively sends heartbeat, 1: client actively sends heartbeat
+        'ping_data' => '{"type":"ping"}', # Data for the server to actively send heartbeat, only for server-side heartbeat. When the client times out without sending heartbeat, the server will actively send a heartbeat detection.
 
         'gateway_start' => true,
         'business_worker_start' => true,
         'register_start' => true,
 
-        'gateway_transport' => 'tcp', // 当为 ssl 时，开启SSL，websocket+SSL 即 wss
+        'gateway_transport' => 'tcp', // When set to 'ssl', SSL will be enabled, websocket+SSL is 'wss'
         /*'gateway_context' => [
-            // 更多ssl选项请参考手册 http://php.net/manual/zh/context.ssl.php
+            // For more SSL options, please refer to the manual: http://php.net/manual/en/context.ssl.php
             'ssl' => array(
-                // 请使用绝对路径
-                'local_cert' => '/your/path/of/server.pem', // 也可以是crt文件
+                // Please use absolute paths
+                'local_cert' => '/your/path/of/server.pem', // It can also be a crt file
                 'local_pk' => '/your/path/of/server.key',
                 'verify_peer' => false,
-                'allow_self_signed' => true, //如果是自签名证书需要开启此选项
+                'allow_self_signed' => true, // Enable this option if it's a self-signed certificate
             )
         ],*/
     ],
     
-    'pid_file' => null, // 自定义pid文件绝对路径，默认在vendor/smileymrking/laravel-gateway-worker/src/GatewayWorker/worker目录下
-    'log_file' => null, // 自定义日志文件绝对路径，默认同上
+    'pid_file' => null, // Custom PID file absolute path, by default in 'vendor/smileymrking/laravel-gateway-worker/src/GatewayWorker/worker' directory
+    'log_file' => null, // Custom log file absolute path, same as above by default
 
 ];
 
 ```
 
-### 启动服务
-使用以下命令启动服务  
-`php artisan gateway-worker {serviceName} {action} {--d}`  
+### Starting the service
+Use the following command to start the service:
+`php artisan gateway-worker {serviceName} {action} {--d}`
 
-|参数|释义|
+| Parameter | Description |
 |:---:|:---|
-|serviceName|服务名称，即配置文件中的键名|
-|action|操作命令，可用命令有 `status` 、 `start` 、 `stop` 、 `restart` 、 `reload` 、 `connections`|
-|--d|使用 DAEMON 模式|
+|serviceName|Service name, which is the key name in the configuration file.|
+|action|Action command, available commands are `status`, `start`, `stop`, `restart`, `reload`, `connections`.|
+|--d|Use DAEMON mode.|
 
 ```shell
 > php artisan gateway-worker push start
@@ -118,68 +119,67 @@ tcp     vagrant         PushBusinessWorker    none                         1    
 tcp     vagrant         Register              text://0.0.0.0:20000         1             [OK]
 ---------------------------------------------------------------------------------------------------------
 Press Ctrl+C to stop. Start success.
-```  
-> `push` 为默认创建的服务名称，可同步发布配置文件，自行修改相关配置
+```
+> 'push' is the default service name that was created, you can synchronize the configuration file and modify the relevant configurations as needed.
 
-## 创建多个服务
-> 可同时启动多个服务  
+## Creating Multiple Services
+> You can start multiple services simultaneously.
 
-#### 新增服务
-参考 `push` 服务，手动创建一个 Demao 类，继承 `SmileyMrKing\GatewayWorker\GatewayWorker\GatewayWorkerService`  
-定义一个 `$serviceName` 属性，值为下一步所添加配置文的键名  
+#### Adding a new service
+Refer to the 'push' service and manually create a 'Demo' class, which inherits from `SmileyMrKing\GatewayWorker\GatewayWorker\GatewayWorkerService`. Define a `$serviceName` property with the value of the key name to be added in the next step.
+
 ```php
 
 namespace App\GatewayWorker\Demo;
 
-use SmileyMrKing\GatewayWorker\GatewayWorker\GatewayWorkerService
+use SmileyMrKing\GatewayWorker\GatewayWorker\GatewayWorkerService;
 
 class Demo extends GatewayWorkerService
 {
-    protected $serviceName = 'demo';
+protected $serviceName = 'demo';
 }
 
 ```
 
-#### 新增配置
-直接复制一份 push 的配置文件进行修改，注意需要修改 `worker_name` 、`gateway_name` 和相关端口的配置，避免重复  
-添加配置的键名为 上一步定义的 `$serviceName` 的值，配置中 `service` 执行上一步配置的 Demo 类  
+#### Adding Configuration
+Copy and modify a copy of the push configuration file, making sure to modify the 'worker_name', 'gateway_name', and related port configurations to avoid duplication. The key name added to the configuration file should be the same as the value of the previously defined `$serviceName`, and set the 'service' in the configuration to the Demo class configured in the previous step.
 
 ```php
 return [
-    // ...
-    'demo' => [
-        'service' => \App\GatewayWorker\Demo\Demo::class,
-        'lan_ip' => env('WS_LAN_IP_DEMO', '127.0.0.1'), #内网ip,多服务器分布式部署的时候需要填写真实的内网ip
+// ...
+'demo' => [
+'service' => \App\GatewayWorker\Demo\Demo::class,
+'lan_ip' => env('WS_LAN_IP_DEMO', '127.0.0.1'), # Internal IP, fill in the real internal IP when deploying in a multi-server distributed environment.
 
         'register' => env('WS_REGISTER_DEMO', 'text://0.0.0.0:20000'),
-        'register_address' => env('WS_REGISTER_ADDRESS_DEMO', '127.0.0.1:20000'), #注册服务地址
+        'register_address' => env('WS_REGISTER_ADDRESS_DEMO', '127.0.0.1:20000'), # Registration service address
 
-        'worker_name' => 'DemoBusinessWorker', #设置 BusinessWorker 进程的名称
-        'worker_count' => 1, #设置 BusinessWorker 进程的数量
-        # 设置使用哪个类来处理业务,业务类至少要实现onMessage静态方法，onConnect 和 onClose 静态方法可以不用实现
+        'worker_name' => 'DemoBusinessWorker', # Set the name of the BusinessWorker process
+        'worker_count' => 1, # Set the number of BusinessWorker processes
+        # Set which class to handle business logic. The class must implement the static method 'onMessage'. 'onConnect' and 'onClose' static methods are optional.
         'event_handler' => \App\GatewayWorker\Demo\DemoEvent::class,
 
-        'gateway' => env('WS_GATEWAY_DEMO', 'websocket://0.0.0.0:20010'),# 允许连接服务的地址
-        'gateway_name' => 'DemoGateway', #设置 Gateway 进程的名称，方便status命令中查看统计
-        'gateway_count' => 1, # Gateway 进程的数量
-        'start_port' => env('WS_START_PORT_DEMO', '20100'),  #监听本机端口的起始端口
-        'ping_interval' => 55,  # 心跳间隔时间，只针对服务端发送心跳
-        'ping_not_response_limit' => 1,   # 0 服务端主动发送心跳, 1 客户端主动发送心跳
-        'ping_data' => '{"type":"ping"}', # 服务端主动发送心跳的数据，只针对服务端发送心跳,客户端超时未发送心跳时会主动向客户端发送一次心跳检测
+        'gateway' => env('WS_GATEWAY_DEMO', 'websocket://0.0.0.0:20010'),# Address allowed for connection
+        'gateway_name' => 'DemoGateway', # Set the name of the Gateway process for easy statistics in the 'status' command
+        'gateway_count' => 1, # Number of Gateway processes
+        'start_port' => env('WS_START_PORT_DEMO', '20100'),  # Starting port for listening on the local machine
+        'ping_interval' => 55,  # Heartbeat interval, only for server-side heartbeat
+        'ping_not_response_limit' => 1,   # 0: server actively sends heartbeat, 1: client actively sends heartbeat
+        'ping_data' => '{"type":"ping"}', # Data for the server to actively send heartbeat, only for server-side heartbeat. When the client times out without sending heartbeat, the server will actively send a heartbeat detection.
 
         'gateway_start' => true,
         'business_worker_start' => true,
         'register_start' => true,
 
-        'gateway_transport' => 'tcp', // 当为 ssl 时，开启SSL，websocket+SSL 即 wss
+        'gateway_transport' => 'tcp', // When set to 'ssl', SSL will be enabled, websocket+SSL is 'wss'
         /*'gateway_context' => [
-            // 更多ssl选项请参考手册 http://php.net/manual/zh/context.ssl.php
+            // For more SSL options, please refer to the manual: http://php.net/manual/en/context.ssl.php
             'ssl' => array(
-                // 请使用绝对路径
-                'local_cert' => '/your/path/of/server.pem', // 也可以是crt文件
+                // Please use absolute paths
+                'local_cert' => '/your/path/of/server.pem', // It can also be a crt file
                 'local_pk' => '/your/path/of/server.key',
                 'verify_peer' => false,
-                'allow_self_signed' => true, //如果是自签名证书需要开启此选项
+                'allow_self_signed' => true, // Enable this option if it's a self-signed certificate
             )
         ],*/
         'pid_file' => storage_path('logs/demo-gateway-worker.pid'),
@@ -191,11 +191,11 @@ return [
 ```
 
 
-配置修改完成后使用 `php artisan gateway-worker demo start` 命令启动，`demo` 为刚刚配置的键名
+After completing the configuration modifications, use the `php artisan gateway-worker demo start` command to start the service, where 'demo' is the key name you configured.
 
-#### 自定义Event Handler  
-`event_handler` 未配置时默认使用 `SmileyMrKing\GatewayWorker\GatewayWorker\GatewayWorkerEvents` ，实现了 `onMessage` 、`onConnect`、`onClose` 三个静态方法  
-可自定义 `event_handler` 类，需要继承 `SmileyMrKing\GatewayWorker\GatewayWorker\GatewayWorkerEvents` 然后重写相关静态方法
+#### Custom Event Handler
+When 'event_handler' is not configured, it will use the `SmileyMrKing\GatewayWorker\GatewayWorker\GatewayWorkerEvents` class, which implements the static methods 'onMessage', 'onConnect', and 'onClose'. You can customize the 'event_handler' class by inheriting from `SmileyMrKing\GatewayWorker\GatewayWorker\GatewayWorkerEvents` and overriding the relevant static methods.
+
 ```php
 namespace App\GatewayWorker\Demo;
 
@@ -203,25 +203,24 @@ use SmileyMrKing\GatewayWorker\GatewayWorker\GatewayWorkerEvents;
 
 class DemoEvent extends GatewayWorkerEvents
 {
-    public static function onMessage($client_id, $message)
-    {
-        // Do something
-    }
+public static function onMessage($client_id, $message)
+{
+// Do something
+}
 }
 ```
 
-`default_service` 配置是指定 Gateway::$registerAddress 默认连接的哪个服务的注册地址 `register_address`  
+The 'default_service' configuration specifies which service's registration address Gateway::$registerAddress will connect to by default.
 
-## 消息推送
-可直接使用 GatewayWorker 中的 `\GatewayWorker\Lib\Gateway` 类，具体用法请查看 [GatewayWorker 手册](http://doc2.workerman.net/)
+## Message Pushing
+You can directly use the `\GatewayWorker\Lib\Gateway` class in GatewayWorker. For specific usage, please refer to the [GatewayWorker manual](http://doc2.workerman.net/).
 
-## 日志查看
-日志和PID文件位于 `vendor/smileymrking/laravel-gateway-worker/src/GatewayWorker/worker` 目录下  
-可通过配置中的 `pid_file` 和 `log_file` 自定义日志和PID路径
+## Viewing Logs
+The logs and PID files are located in the `vendor/smileymrking/laravel-gateway-worker/src/GatewayWorker/worker` directory. You can customize the log and PID paths using the `pid_file` and `log_file` settings in the configuration.
 
-## 参考
-- [GatewayWorker2.x 3.x 手册](http://doc2.workerman.net/)
-- [在 Laravel 中使用 Workerman 进行 socket 通讯](https://learnku.com/articles/13151/using-laravel-to-carry-out-socket-communication-in-workerman)
+## References
+- [GatewayWorker 2.x 3.x Manual](http://doc2.workerman.net/)
+- [Using Laravel to Carry Out Socket Communication in Workerman](https://learnku.com/articles/13151/using-laravel-to-carry-out-socket-communication-in-workerman)
 
 ## License
 
