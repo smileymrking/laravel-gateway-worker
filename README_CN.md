@@ -1,4 +1,4 @@
-> English｜中文
+> [English](./README.md)｜[中文](./README_CN.md)
 # Laravel GatewayWorker
 为了能够在 Laravel 中更优雅的使用 [GatewayWorker](https://github.com/walkor/GatewayWorker) 于是我基于 GatewayWorker 开发了这个扩展，使其能够开箱即用。
 
@@ -53,7 +53,6 @@ return [
     'default_service' => 'push', # 默认的 Gateway::$registerAddress 设置为 push.register_address
 
     'push' => [
-        'service' => \SmileyMrKing\GatewayWorker\Push\Push::class,
         'lan_ip' => env('WS_LAN_IP', '127.0.0.1'), #内网ip,多服务器分布式部署的时候需要填写真实的内网ip
 
         'register' => env('WS_REGISTER', 'text://0.0.0.0:20000'),
@@ -126,30 +125,12 @@ Press Ctrl+C to stop. Start success.
 > 可同时启动多个服务  
 
 #### 新增服务
-参考 `push` 服务，手动创建一个 Demao 类，继承 `SmileyMrKing\GatewayWorker\GatewayWorker\GatewayWorkerService`  
-定义一个 `$serviceName` 属性，值为下一步所添加配置文的键名  
-```php
-
-namespace App\GatewayWorker\Demo;
-
-use SmileyMrKing\GatewayWorker\GatewayWorker\GatewayWorkerService
-
-class Demo extends GatewayWorkerService
-{
-    protected $serviceName = 'demo';
-}
-
-```
-
-#### 新增配置
-直接复制一份 push 的配置文件进行修改，注意需要修改 `worker_name` 、`gateway_name` 和相关端口的配置，避免重复  
-添加配置的键名为 上一步定义的 `$serviceName` 的值，配置中 `service` 执行上一步配置的 Demo 类  
+直接复制一份 push 的配置文件进行修改，注意需要修改 `worker_name` 、`gateway_name` 和相关端口的配置，避免重复，配置的key即为服务名称
 
 ```php
 return [
     // ...
     'demo' => [
-        'service' => \App\GatewayWorker\Demo\Demo::class,
         'lan_ip' => env('WS_LAN_IP_DEMO', '127.0.0.1'), #内网ip,多服务器分布式部署的时候需要填写真实的内网ip
 
         'register' => env('WS_REGISTER_DEMO', 'text://0.0.0.0:20000'),

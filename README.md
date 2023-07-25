@@ -1,4 +1,4 @@
-> English｜中文
+> [English](./README.md)｜[中文](./README_CN.md)
 # Laravel GatewayWorker
 In order to use [GatewayWorker](https://github.com/walkor/GatewayWorker) more elegantly in Laravel, I developed this extension based on GatewayWorker to make it ready to use.
 
@@ -15,8 +15,8 @@ composer require smileymrking/laravel-gateway-worker
 
 ```php
 'providers' => [
-// ...
-SmileyMrKing\GatewayWorker\GatewayWorkerServiceProvider::class,
+    // ...
+    SmileyMrKing\GatewayWorker\GatewayWorkerServiceProvider::class,
 ];
 ```
 
@@ -53,7 +53,6 @@ return [
     'default_service' => 'push', # Set Gateway::$registerAddress to push.register_address by default
 
     'push' => [
-        'service' => \SmileyMrKing\GatewayWorker\Push\Push::class,
         'lan_ip' => env('WS_LAN_IP', '127.0.0.1'), # Internal IP, fill in the real internal IP when deploying in a multi-server distributed environment.
 
         'register' => env('WS_REGISTER', 'text://0.0.0.0:20000'),
@@ -126,30 +125,13 @@ Press Ctrl+C to stop. Start success.
 > You can start multiple services simultaneously.
 
 #### Adding a new service
-Refer to the 'push' service and manually create a 'Demo' class, which inherits from `SmileyMrKing\GatewayWorker\GatewayWorker\GatewayWorkerService`. Define a `$serviceName` property with the value of the key name to be added in the next step.
-
-```php
-
-namespace App\GatewayWorker\Demo;
-
-use SmileyMrKing\GatewayWorker\GatewayWorker\GatewayWorkerService;
-
-class Demo extends GatewayWorkerService
-{
-protected $serviceName = 'demo';
-}
-
-```
-
-#### Adding Configuration
-Copy and modify a copy of the push configuration file, making sure to modify the 'worker_name', 'gateway_name', and related port configurations to avoid duplication. The key name added to the configuration file should be the same as the value of the previously defined `$serviceName`, and set the 'service' in the configuration to the Demo class configured in the previous step.
+Directly copy a duplicate of the 'push' configuration file and make the necessary modifications, paying attention to updating the 'worker_name', 'gateway_name', and related port configurations to avoid duplication. The key used in the configuration will be the service name.
 
 ```php
 return [
 // ...
 'demo' => [
-'service' => \App\GatewayWorker\Demo\Demo::class,
-'lan_ip' => env('WS_LAN_IP_DEMO', '127.0.0.1'), # Internal IP, fill in the real internal IP when deploying in a multi-server distributed environment.
+        'lan_ip' => env('WS_LAN_IP_DEMO', '127.0.0.1'), # Internal IP, fill in the real internal IP when deploying in a multi-server distributed environment.
 
         'register' => env('WS_REGISTER_DEMO', 'text://0.0.0.0:20000'),
         'register_address' => env('WS_REGISTER_ADDRESS_DEMO', '127.0.0.1:20000'), # Registration service address
@@ -182,8 +164,8 @@ return [
                 'allow_self_signed' => true, // Enable this option if it's a self-signed certificate
             )
         ],*/
-        'pid_file' => storage_path('logs/demo-gateway-worker.pid'),
-        'log_file' => storage_path('logs/demo-gateway-worker.log'),
+        'pid_file' => storage_path('logs/gateway-worker-demo.pid'),
+        'log_file' => storage_path('logs/gateway-worker-demo.log'),
     ],
 
 ];
@@ -203,10 +185,10 @@ use SmileyMrKing\GatewayWorker\GatewayWorker\GatewayWorkerEvents;
 
 class DemoEvent extends GatewayWorkerEvents
 {
-public static function onMessage($client_id, $message)
-{
-// Do something
-}
+    public static function onMessage($client_id, $message)
+    {
+        // Do something
+    }
 }
 ```
 

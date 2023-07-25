@@ -4,9 +4,9 @@ namespace SmileyMrKing\GatewayWorker\GatewayWorker;
 
 interface GatewayWorkerInterface
 {
-    public function start();
+    public static function startAll($serviceName);
 
-    public function ready();
+    public function ready($serviceName);
 
     public function startBusinessWorker();
 

@@ -17,7 +17,6 @@ return [
     'default_service' => 'push', # 默认的 Gateway::$registerAddress 设置为 push.register_address
 
     'push' => [
-        'service' => \SmileyMrKing\GatewayWorker\GatewayWorker\Push\Push::class,
         'lan_ip' => env('WS_LAN_IP', '127.0.0.1'), #内网ip,多服务器分布式部署的时候需要填写真实的内网ip
 
         'register' => env('WS_REGISTER', 'text://0.0.0.0:20000'),

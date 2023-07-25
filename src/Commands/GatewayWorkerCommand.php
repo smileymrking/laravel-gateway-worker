@@ -3,12 +3,10 @@
 namespace SmileyMrKing\GatewayWorker\Commands;
 
 use Illuminate\Console\Command;
-use SmileyMrKing\GatewayWorker\GatewayWorker\GatewayWorkerTrait;
+use SmileyMrKing\GatewayWorker\GatewayWorker\GatewayWorkerService;
 
 class GatewayWorkerCommand extends Command
 {
-    use GatewayWorkerTrait;
-
     /**
      * The name and signature of the console command.
      *
@@ -23,9 +21,6 @@ class GatewayWorkerCommand extends Command
      */
     protected $description = 'Start a GatewayWorker Service.';
 
-
-    protected $serviceName = null;
-
     /**
      * Create a new command instance.
      *
@@ -38,7 +33,6 @@ class GatewayWorkerCommand extends Command
 
     /**
      * Execute the console command.
-     * @throws \ReflectionException
      *
      * @return mixed
      */
@@ -46,30 +40,19 @@ class GatewayWorkerCommand extends Command
     {
         global $argv;
 
-        if (in_array($action = $this->argument('action'), ['status', 'start', 'stop', 'restart', 'reload', 'connections'])) {
-
-            $this->serviceName = $this->argument('serviceName');
-            $daemon = $this->option('d') ? '-d' : '';
-
-            $class = $this->config("service");
-
-            if (empty($class)) {
-                $this->error("{$this->serviceName}'s GatewayWorker config doesn't exist");
-            } else {
-                $argv[0] = 'gateway-worker ' . $this->serviceName;
-                $argv[1] = $action;
-                $argv[2] = $daemon;
-
-                $service = new $class();
-                try {
-                    $service->start();
-                } catch (\Exception $e) {
-                    $this->error($e->getMessage());
-                }
-            }
-
-        } else {
+        if (!in_array($action = $this->argument('action'), ['status', 'start', 'stop', 'restart', 'reload', 'connections'])) {
             $this->error('Invalid Arguments');
+            return;
+        }
+        $serviceName = $this->argument('serviceName');
+        $daemon = $this->option('d') ? '-d' : '';
+        $argv[0] = 'gateway-worker ' . $serviceName;
+        $argv[1] = $action;
+        $argv[2] = $daemon;
+        try {
+            GatewayWorkerService::startAll($serviceName);
+        } catch (\Exception $e) {
+            $this->error($e->getMessage());
         }
     }
 }
