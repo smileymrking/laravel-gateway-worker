@@ -17,4 +17,8 @@ class PushEvent extends GatewayWorkerEvents
             Gateway::sendToClient($client_id, json_encode(['type' => 'close']));
         }
     }
+
+    public static function sendToAll($client_id, $message) {
+        Gateway::sendToAll($message["msg"]);
+    }
 }
