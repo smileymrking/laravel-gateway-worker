@@ -8,7 +8,7 @@ use GatewayWorker\Gateway;
 use GatewayWorker\Register;
 use Workerman\Worker;
 
-class GatewayWorkerService implements GatewayWorkerInterface
+class GatewayWorkerService
 {
     protected $serviceName;
     protected $configs;
