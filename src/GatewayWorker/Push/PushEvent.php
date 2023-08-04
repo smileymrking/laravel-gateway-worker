@@ -21,4 +21,8 @@ class PushEvent extends GatewayWorkerEvents
     public static function sendToAll($client_id, $message) {
         Gateway::sendToAll($message["msg"]);
     }
+
+    public static function sendToClient($client_id, $message) {
+        Gateway::sendToClient($client_id, $message["msg"]);
+    }
 }
