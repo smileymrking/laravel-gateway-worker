@@ -37,4 +37,8 @@ class PushEvent extends GatewayWorkerEvents
     public static function sendToGroup($client_id, $message) {
         Gateway::sendToGroup($message["group"], $message["msg"]);
     }
+
+    public static function bindUid($client_id, $message) {
+        Gateway::bindUid($client_id, $message["uid"]);
+    }
 }
