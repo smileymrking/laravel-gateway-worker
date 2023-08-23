@@ -41,4 +41,8 @@ class PushEvent extends GatewayWorkerEvents
     public static function bindUid($client_id, $message) {
         Gateway::bindUid($client_id, $message["uid"]);
     }
+
+    public static function closeClient($client_id, $message) {
+        Gateway::closeClient($client_id);
+    }
 }
