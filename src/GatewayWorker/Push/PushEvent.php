@@ -56,4 +56,8 @@ class PushEvent extends GatewayWorkerEvents
     public static function destoryClient($client_id, $message) {
         Gateway::destoryClient($client_id);
     }
+
+    public static function destoryCurrentClient($client_id, $message) {
+        Gateway::destoryCurrentClient();
+    }
 }
