@@ -64,4 +64,8 @@ class PushEvent extends GatewayWorkerEvents
     public static function joinGroup($client_id, $message) {
         Gateway::joinGroup($client_id, $message["group"]);
     }
+
+    public static function leaveGroup($client_id, $message) {
+        Gateway::leaveGroup($client_id, $message["group"]);
+    }
 }
