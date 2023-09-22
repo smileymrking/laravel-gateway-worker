@@ -12,7 +12,12 @@ class PushEvent extends GatewayWorkerEvents
     {
         $message = @json_decode($message, true);
         if ($message && !empty($message['type']) && method_exists(static::class, $message['type'])) {
-            static::{$message['type']}($client_id, $message);
+            $result  = static::{$message['type']}($client_id, $message);
+            if (!empty($result)) {
+                $message['isRes'] = true;
+                $message['result'] = $result;
+                Gateway::sendToClient($client_id, json_encode($message));
+            }
         } else {
             Gateway::sendToClient($client_id, json_encode(['type' => 'close']));
         }
