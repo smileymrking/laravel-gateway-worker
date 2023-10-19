@@ -113,4 +113,8 @@ class PushEvent extends GatewayWorkerEvents
     public static function getUidListByGroup($client_id, $message) {
         return Gateway::getUidListByGroup($message["group"]);
     }
+
+    public static function getUidCountByGroup($client_id, $message) {
+        return Gateway::getUidCountByGroup($message["group"]);
+    }
 }
