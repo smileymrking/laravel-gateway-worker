@@ -121,4 +121,8 @@ class PushEvent extends GatewayWorkerEvents
     public static function getSession($client_id, $message) {
         return Gateway::getSession($client_id);
     }
+
+    public static function getAllClientSessions($client_id, $message) {
+        return Gateway::getAllClientSessions($message["group"]);
+    }
 }
